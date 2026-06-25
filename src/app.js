@@ -1,5 +1,6 @@
 const express = require("express");
 const { connectDb } = require("./config/database");
+const validator = require("validator");
 const User = require("./models/user");
 
 const app = express();
@@ -9,6 +10,12 @@ app.use(express.json());
 app.post("/signup", async (req, res) => {
   // creating user instance of User model
   const user = new User(req.body);
+
+  const isEmailValid = validator.isEmail(req.body.emailId);
+
+  if (!isEmailValid) {
+    res.status(400).send("invalid email");
+  }
 
   try {
     // saving data in DB
