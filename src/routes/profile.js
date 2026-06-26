@@ -14,22 +14,23 @@ profileRouter.get("/user", userAuth, async (req, res) => {
   }
 });
 
-profileRouter.patch("/user", async (req, res) => {
-  const userId = req.body.userId;
-  const data = req.body.data;
+profileRouter.patch("/user", userAuth, async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
-      returnDocument: "after",
-      runValidators: true, // to validate while updating
+    const loggedInUser = req.user;
+    const userDataToUpdate = req.body;
+
+    Object.keys(userDataToUpdate).forEach((key) => {
+      loggedInUser[key] = userDataToUpdate[key];
     });
 
+    await loggedInUser.save();
     res.send("user data updated");
   } catch (error) {
-    res.status(500).send("Error updating user: " + error.message);
+    res.status(400).send("Error updating user: " + error.message);
   }
 });
 
-profileRouter.get("/users", async (req, res) => {
+profileRouter.get("/users", userAuth, async (req, res) => {
   try {
     const users = await User.find({});
     res.send(users);
