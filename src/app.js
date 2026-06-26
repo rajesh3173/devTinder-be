@@ -1,12 +1,17 @@
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const { connectDb } = require("./config/database");
 const validator = require("validator");
 const bcrypt = require("bcrypt");
 const User = require("./models/user");
+const { userAuth } = require("./middlewares/auth");
 
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
+
+const jwtSecret = "DEV@TINDER$007";
 
 app.post("/signup", async (req, res) => {
   try {
@@ -27,8 +32,6 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("user added successfully...!");
   } catch (error) {
-    console.log(error);
-
     res.status(500).send("Error saving user: " + error.message);
   }
 });
@@ -42,13 +45,26 @@ app.post("/login", async (req, res) => {
       throw new Error("Invalid credentials");
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.validatePassword(password);
 
     if (!isPasswordValid) {
       throw new Error("Invalid credentials");
     } else {
+      const token = await user.getJWT();
+
+      res.cookie("token", token);
       res.send("login success");
     }
+  } catch (error) {
+    res.status(400).send("Error: " + error.message);
+  }
+});
+
+app.get("/profile", userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+
+    res.send(user);
   } catch (error) {
     res.status(400).send("Error: " + error.message);
   }
@@ -62,12 +78,9 @@ app.patch("/user", async (req, res) => {
       returnDocument: "after",
       runValidators: true,
     });
-    console.log("user", user);
 
     res.send("user data updated");
   } catch (error) {
-    console.log(error);
-
     res.status(500).send("Error updating user: " + error.message);
   }
 });
