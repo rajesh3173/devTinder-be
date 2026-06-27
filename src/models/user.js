@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       minLength: 3,
       maxLength: 100,
+      index: true,
     },
     emailId: {
       type: String,
@@ -22,11 +23,9 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
-      lowercase: true,
-      validate(value) {
-        if (!["male", "female", "others"].includes(value)) {
-          throw new Error("gender data is not valid");
-        }
+      enum: {
+        values: ["male", "female", "others"],
+        message: `{VALUE} is not valid gender`,
       },
     },
     about: {
