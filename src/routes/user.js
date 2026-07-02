@@ -72,7 +72,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
         { _id: { $ne: user._id } },
       ],
     })
-      .select("name email")
+      .select("name emailId about")
       .skip(skip)
       .limit(limit);
 
