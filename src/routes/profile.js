@@ -24,7 +24,7 @@ profileRouter.patch("/user", userAuth, async (req, res) => {
     });
 
     await loggedInUser.save();
-    res.send("user data updated");
+    res.send(loggedInUser);
   } catch (error) {
     res.status(400).send("Error updating user: " + error.message);
   }
