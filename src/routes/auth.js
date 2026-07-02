@@ -45,7 +45,7 @@ authRouter.post("/login", async (req, res) => {
       const token = await user.getJWT();
 
       res.cookie("token", token, { maxAge: 1000 * 60 * 60 * 24 });
-      res.send({ data: user });
+      res.send(user);
     }
   } catch (error) {
     res.status(400).send("Error: " + error.message);
