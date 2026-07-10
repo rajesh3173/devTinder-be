@@ -31,12 +31,6 @@ userRouter.get("/connections", userAuth, async (req, res) => {
       .populate("toUserId", "name email");
 
     const connections = connectionRequests.map((connection) => {
-      console.log(
-        connection.fromUserId._id.equals(user._id),
-        connection.fromUserId._id,
-        user._id
-      );
-
       return !connection.fromUserId._id.equals(user._id)
         ? connection.fromUserId
         : connection.toUserId;

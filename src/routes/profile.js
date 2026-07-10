@@ -7,6 +7,7 @@ const profileRouter = express.Router();
 profileRouter.get("/user", userAuth, async (req, res) => {
   try {
     const user = req.user;
+    console.log("env", process.env.DOT_ENV);
 
     res.send(user);
   } catch (error) {

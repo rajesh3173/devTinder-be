@@ -1,6 +1,8 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+require("dotenv").config();
+const cron = require("node-cron");
 const { connectDb } = require("./config/database");
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
@@ -8,6 +10,10 @@ const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
 
 const app = express();
+
+cron.schedule("* * * * *", () => {
+  console.log("hello ", new Date());
+});
 
 app.use(
   cors({
