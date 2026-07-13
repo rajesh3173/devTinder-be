@@ -10,6 +10,7 @@ const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
 const chatRouter = require("./routes/chat");
+const notificationRouter = require("./routes/notifications");
 const initializeSocket = require("./config/socket");
 
 const app = express();
@@ -32,6 +33,7 @@ app.use("/profile", profileRouter);
 app.use("/request", requestRouter);
 app.use("/user", userRouter);
 app.use("/chat", chatRouter);
+app.use("/notifications", notificationRouter);
 
 const server = http.createServer(app);
 initializeSocket(server);
