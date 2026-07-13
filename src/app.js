@@ -1,19 +1,22 @@
 const express = require("express");
+const http = require("http");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 require("dotenv").config();
-const cron = require("node-cron");
+// const cron = require("node-cron");
 const { connectDb } = require("./config/database");
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
+const chatRouter = require("./routes/chat");
+const initializeSocket = require("./config/socket");
 
 const app = express();
 
-cron.schedule("* * * * *", () => {
-  console.log("hello ", new Date());
-});
+// cron.schedule("* * * * *", () => {
+//   console.log("hello ", new Date());
+// });
 
 app.use(
   cors({
@@ -28,11 +31,15 @@ app.use("/auth", authRouter);
 app.use("/profile", profileRouter);
 app.use("/request", requestRouter);
 app.use("/user", userRouter);
+app.use("/chat", chatRouter);
+
+const server = http.createServer(app);
+initializeSocket(server);
 
 connectDb()
   .then(() => {
     console.log("databse connection established...!");
-    app.listen(8080, () => {
+    server.listen(8080, () => {
       console.log("Server is listening on port 8080....");
     });
   })
